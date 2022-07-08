@@ -6,7 +6,11 @@ User.select("*, (select count(*) from posts where posts.user_id=users.id) as pos
 # And we using query list post with user_id, so query have N+1 query 
 
 # I suggest code like that:
+# I think we join to the table posts
+# then we using select not subquery get users.* and count post
+# then group by with users.id
+# then order by with post_count desc
 User.joins(:posts)
     .select("users.*, count(posts.id) as post_count")
-    .group_by("users.id")
-    .order_by("post_count desc")
+    .group("users.id")
+    .order("post_count desc")
